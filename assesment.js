@@ -31,6 +31,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use(cors({
   origin:[
     "http://localhost:5173",
+    "https://mini-social-media-web.vercel.app"
   ],
   credentials: true,
 }));
@@ -42,8 +43,8 @@ connect_db();
 
 app.get("/api/auth-check", is_logged_in , async (req, res) => {
   try {
-    let data = await User.findOne({_id : req.user_id});
-    return res.status(200).json({ message: "user is logged in" , logged_in : req.logged_in , data});
+    let data = await User.findOne({_id : req.user_id}).select("-password");
+    return res.status(200).json({ message: "user is logged in" , logged_in : req.logged_in , user_data : data});
   } catch (error) {
     return res.status(500).json({ message: "server error", error: error });
   }
